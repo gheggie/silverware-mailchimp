@@ -1,0 +1,20 @@
+---
+Name: silverware-mailchimp
+---
+
+# Configure Content Controller:
+
+SilverStripe\CMS\Controllers\ContentController:
+  required_js:
+    - silverware-mailchimp/client/dist/js/bundle.js
+
+# Configure Site Configuration:
+
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - SilverWare\MailChimp\Extensions\MailChimpConfig
+
+# Configure MailChimp API:
+
+SilverWare\MailChimp\API\MailChimpAPI:
+  default_timeout: 10

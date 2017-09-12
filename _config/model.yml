@@ -1,0 +1,9 @@
+---
+Name: silverware-mailchimp-model
+---
+
+# Configure Model:
+
+SilverStripe\Core\Injector\Injector:
+  MailChimpAPI:
+    class: SilverWare\MailChimp\API\MailChimpAPI

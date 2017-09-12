@@ -1,0 +1,11 @@
+---
+Name: silverware-mailchimp-cache
+---
+
+# Configure Cache:
+
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.MailChimpListFieldCache:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: 'MailChimpListFieldCache'
