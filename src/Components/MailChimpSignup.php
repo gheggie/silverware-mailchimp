@@ -66,7 +66,7 @@ class MailChimpSignup extends BaseComponent
      * @var string
      * @config
      */
-    private static $icon = 'silverware-mailchimp/admin/client/dist/images/icons/MailChimpSignup.png';
+    private static $icon = 'silverware/mailchimp: admin/client/dist/images/icons/MailChimpSignup.png';
     
     /**
      * Defines an ancestor class to hide from the admin interface.
@@ -89,6 +89,7 @@ class MailChimpSignup extends BaseComponent
         'ShowLastName' => 'Boolean',
         'RequireFirstName' => 'Boolean',
         'RequireLastName' => 'Boolean',
+        'UsePlaceholders' => 'Boolean',
         'ButtonLabel' => 'Varchar(64)',
         'OnErrorMessage' => 'Varchar(255)',
         'OnSubscribeMessage' => 'Varchar(255)',
@@ -103,7 +104,8 @@ class MailChimpSignup extends BaseComponent
      */
     private static $defaults = [
         'ShowFirstName' => 1,
-        'RequireFirstName' => 1
+        'RequireFirstName' => 1,
+        'UsePlaceholders' => 0
     ];
     
     /**
@@ -187,6 +189,10 @@ class MailChimpSignup extends BaseComponent
                         TextField::create(
                             'ButtonLabel',
                             $this->fieldLabel('ButtonLabel')
+                        ),
+                        CheckboxField::create(
+                            'UsePlaceholders',
+                            $this->fieldLabel('UsePlaceholders')
                         )
                     ]
                 ),
@@ -255,6 +261,7 @@ class MailChimpSignup extends BaseComponent
         $labels['IntroContent'] = _t(__CLASS__ . '.INTROCONTENT', 'Intro content');
         $labels['RequireFields'] = _t(__CLASS__ . '.REQUIREFIELDS', 'Require fields');
         $labels['ButtonLabel'] = _t(__CLASS__ . '.BUTTONLABEL', 'Button label');
+        $labels['UsePlaceholders'] = _t(__CLASS__ . '.USEPLACEHOLDERS', 'Use placeholders');
         
         // Define Message Field Labels:
         

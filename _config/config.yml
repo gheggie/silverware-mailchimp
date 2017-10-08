@@ -6,7 +6,7 @@ Name: silverware-mailchimp
 
 SilverStripe\CMS\Controllers\ContentController:
   required_js:
-    - silverware-mailchimp/client/dist/js/bundle.js
+    - "silverware/mailchimp: client/dist/js/bundle.js"
 
 # Configure Site Configuration:
 
