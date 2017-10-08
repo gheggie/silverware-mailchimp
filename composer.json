@@ -1,6 +1,6 @@
 {
   "name": "silverware/mailchimp",
-  "type": "silverstripe-module",
+  "type": "silverstripe-vendormodule",
   "description": "SilverWare MailChimp Module.",
   "homepage": "https://github.com/praxisnetau/silverware-mailchimp",
   "keywords": [
@@ -21,7 +21,7 @@
   "require": {
     "php": ">=5.6.0",
     "drewm/mailchimp-api": "^2.4",
-    "silverware/silverware": "^1.2",
+    "silverware/silverware": "^1.3",
     "silverware/validator": "^1.1"
   },
   "autoload": {
@@ -33,7 +33,10 @@
     "branch-alias": {
       "dev-master": "1.0.x-dev"
     },
-    "installer-name": "silverware-mailchimp"
+    "expose": [
+      "admin/client/dist",
+      "client/dist"
+    ]
   },
   "minimum-stability": "dev",
   "prefer-stable": true

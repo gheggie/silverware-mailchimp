@@ -71,22 +71,30 @@ class MailChimpSignupController extends BaseComponentController
         // Create Form Fields:
         
         $fields = FieldList::create(
-            EmailField::create(
+            $email = EmailField::create(
                 'Email',
                 _t(__CLASS__ . '.EMAILADDRESS', 'Email Address')
             )
         );
+        
+        if ($this->UsePlaceholders) {
+            $email->setAttribute('placeholder', $email->Title())->setTitle('');
+        }
         
         // Create First Name Field:
         
         if ($this->ShowFirstName) {
             
             $fields->push(
-                TextField::create(
+                $fname = TextField::create(
                     'FirstName',
                     _t(__CLASS__ . '.FIRSTNAME', 'First Name')
                 )
             );
+            
+            if ($this->UsePlaceholders) {
+                $fname->setAttribute('placeholder', $fname->Title())->setTitle('');
+            }
             
         }
         
@@ -95,11 +103,15 @@ class MailChimpSignupController extends BaseComponentController
         if ($this->ShowLastName) {
             
             $fields->push(
-                TextField::create(
+                $lname = TextField::create(
                     'LastName',
                     _t(__CLASS__ . '.LASTNAME', 'Last Name')
                 )
             );
+            
+            if ($this->UsePlaceholders) {
+                $lname->setAttribute('placeholder', $lname->Title())->setTitle('');
+            }
             
         }
         
