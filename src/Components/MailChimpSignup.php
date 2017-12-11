@@ -69,6 +69,14 @@ class MailChimpSignup extends BaseComponent
     private static $icon = 'silverware/mailchimp: admin/client/dist/images/icons/MailChimpSignup.png';
     
     /**
+     * Defines the table name to use for this object.
+     *
+     * @var string
+     * @config
+     */
+    private static $table_name = 'SilverWare_MailChimpSignup';
+    
+    /**
      * Defines an ancestor class to hide from the admin interface.
      *
      * @var string
