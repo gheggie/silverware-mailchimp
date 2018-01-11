@@ -180,7 +180,7 @@ class MailChimpListField extends DropdownField implements Flushable
         // Disable On Error:
         
         if ($error) {
-            $this->setMessage($e->getMessage())->setDisabled(true);
+            $this->setMessage($error)->setDisabled(true);
         }
         
         // Answer Source:
