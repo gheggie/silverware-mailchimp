@@ -8,37 +8,36 @@
  * For full copyright and license information, please view the
  * LICENSE.md file that was distributed with this source code.
  *
- * @package SilverWare\MailChimp\Components
+ * @package SilverWare\MailChimp\Pages
  * @author Colin Tucker <colin@praxis.net.au>
- * @copyright 2017 Praxis Interactive
+ * @copyright 2018 Praxis Interactive
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @link https://github.com/praxisnetau/silverware-components
+ * @link https://github.com/praxisnetau/silverware-mailchimp
  */
 
-namespace SilverWare\MailChimp\Components;
+namespace SilverWare\MailChimp\Pages;
 
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Convert;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ValidationResult;
-use SilverWare\Components\BaseComponentController;
 use SilverWare\Validator\Validator;
-use Exception;
+use PageController;
 
 /**
- * An extension of the base component controller class for a MailChimp Signup component controller.
+ * An extension of the page controller class for a MailChimp subscribe page controller.
  *
- * @package SilverWare\MailChimp\Components
+ * @package SilverWare\MailChimp\Pages
  * @author Colin Tucker <colin@praxis.net.au>
- * @copyright 2017 Praxis Interactive
+ * @copyright 2018 Praxis Interactive
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @link https://github.com/praxisnetau/silverware-components
+ * @link https://github.com/praxisnetau/silverware-mailchimp
  */
-class MailChimpSignupController extends BaseComponentController
+class SubscribePageController extends PageController
 {
     /**
      * Defines the injector dependencies for this object.
@@ -62,7 +61,7 @@ class MailChimpSignupController extends BaseComponentController
     ];
     
     /**
-     * Answers the signup form object for the template.
+     * Answers the form object for the template.
      *
      * @return Form
      */
@@ -70,16 +69,12 @@ class MailChimpSignupController extends BaseComponentController
     {
         // Create Form Fields:
         
-        $fields = FieldList::create(
-            $email = EmailField::create(
+        $fields = FieldList::create([
+            EmailField::create(
                 'Email',
                 _t(__CLASS__ . '.EMAILADDRESS', 'Email Address')
             )
-        );
-        
-        if ($this->UsePlaceholders) {
-            $email->setAttribute('placeholder', $email->Title())->setTitle('');
-        }
+        ]);
         
         // Create First Name Field:
         
@@ -91,10 +86,6 @@ class MailChimpSignupController extends BaseComponentController
                     _t(__CLASS__ . '.FIRSTNAME', 'First Name')
                 )
             );
-            
-            if ($this->UsePlaceholders) {
-                $fname->setAttribute('placeholder', $fname->Title())->setTitle('');
-            }
             
         }
         
@@ -109,20 +100,13 @@ class MailChimpSignupController extends BaseComponentController
                 )
             );
             
-            if ($this->UsePlaceholders) {
-                $lname->setAttribute('placeholder', $lname->Title())->setTitle('');
-            }
-            
         }
         
         // Create Form Actions:
         
-        $actions = FieldList::create(
-            FormAction::create(
-                'doSubscribe',
-                $this->ButtonLabel
-            )
-        );
+        $actions = FieldList::create([
+            FormAction::create('doSubscribe', 'Subscribe')
+        ]);
         
         // Define Required Fields:
         
@@ -144,19 +128,11 @@ class MailChimpSignupController extends BaseComponentController
         
         $form = Form::create($this, 'Form', $fields, $actions, $validator);
         
-        // Define Form ID:
-        
-        $form->setHTMLID(sprintf('%s_Form', $this->getHTMLID()));
-        
-        // Enable Spam Protection (if installed):
+        // Enable Spam Protection (if available):
         
         if ($form->hasMethod('enableSpamProtection')) {
             $form->enableSpamProtection();
         }
-        
-        // Restore Form State (following ID change):
-        
-        $form->restoreFormState();
         
         // Extend Form Object:
         
@@ -185,14 +161,14 @@ class MailChimpSignupController extends BaseComponentController
         
         $result = ValidationResult::create();
         
-        // Attempt to Subscribe User to List via API:
+        // Attempt to Unsubscribe User from List via API:
         
         try {
             
             // Obtain API Response:
             
             $response = $this->api->put(
-                $this->getSubscribeMethod(),
+                $this->getSubscribeMethod($data),
                 [
                     'email_address' => $data['Email'],
                     'email_type' => 'html',

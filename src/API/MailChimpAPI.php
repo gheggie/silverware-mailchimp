@@ -203,6 +203,18 @@ class MailChimpAPI
     }
     
     /**
+     * Answers an MD5 hash for the given email address (used for API actions).
+     *
+     * @param string $email
+     *
+     * @return string
+     */
+    public function hash($email)
+    {
+        return md5(strtolower(trim($email)));
+    }
+    
+    /**
      * Answers true if the last request was successful.
      *
      * @return boolean

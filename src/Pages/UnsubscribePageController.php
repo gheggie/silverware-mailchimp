@@ -8,37 +8,35 @@
  * For full copyright and license information, please view the
  * LICENSE.md file that was distributed with this source code.
  *
- * @package SilverWare\MailChimp\Components
+ * @package SilverWare\MailChimp\Pages
  * @author Colin Tucker <colin@praxis.net.au>
- * @copyright 2017 Praxis Interactive
+ * @copyright 2018 Praxis Interactive
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @link https://github.com/praxisnetau/silverware-components
+ * @link https://github.com/praxisnetau/silverware-mailchimp
  */
 
-namespace SilverWare\MailChimp\Components;
+namespace SilverWare\MailChimp\Pages;
 
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Convert;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\ValidationResult;
-use SilverWare\Components\BaseComponentController;
 use SilverWare\Validator\Validator;
-use Exception;
+use PageController;
 
 /**
- * An extension of the base component controller class for a MailChimp Signup component controller.
+ * An extension of the page controller class for a MailChimp unsubscribe page controller.
  *
- * @package SilverWare\MailChimp\Components
+ * @package SilverWare\MailChimp\Pages
  * @author Colin Tucker <colin@praxis.net.au>
- * @copyright 2017 Praxis Interactive
+ * @copyright 2018 Praxis Interactive
  * @license https://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @link https://github.com/praxisnetau/silverware-components
+ * @link https://github.com/praxisnetau/silverware-mailchimp
  */
-class MailChimpSignupController extends BaseComponentController
+class UnsubscribePageController extends PageController
 {
     /**
      * Defines the injector dependencies for this object.
@@ -58,11 +56,11 @@ class MailChimpSignupController extends BaseComponentController
      */
     private static $allowed_actions = [
         'Form',
-        'doSubscribe'
+        'doUnsubscribe'
     ];
     
     /**
-     * Answers the signup form object for the template.
+     * Answers the form object for the template.
      *
      * @return Form
      */
@@ -70,93 +68,34 @@ class MailChimpSignupController extends BaseComponentController
     {
         // Create Form Fields:
         
-        $fields = FieldList::create(
-            $email = EmailField::create(
+        $fields = FieldList::create([
+            EmailField::create(
                 'Email',
                 _t(__CLASS__ . '.EMAILADDRESS', 'Email Address')
             )
-        );
-        
-        if ($this->UsePlaceholders) {
-            $email->setAttribute('placeholder', $email->Title())->setTitle('');
-        }
-        
-        // Create First Name Field:
-        
-        if ($this->ShowFirstName) {
-            
-            $fields->push(
-                $fname = TextField::create(
-                    'FirstName',
-                    _t(__CLASS__ . '.FIRSTNAME', 'First Name')
-                )
-            );
-            
-            if ($this->UsePlaceholders) {
-                $fname->setAttribute('placeholder', $fname->Title())->setTitle('');
-            }
-            
-        }
-        
-        // Create Last Name Field:
-        
-        if ($this->ShowLastName) {
-            
-            $fields->push(
-                $lname = TextField::create(
-                    'LastName',
-                    _t(__CLASS__ . '.LASTNAME', 'Last Name')
-                )
-            );
-            
-            if ($this->UsePlaceholders) {
-                $lname->setAttribute('placeholder', $lname->Title())->setTitle('');
-            }
-            
-        }
+        ]);
         
         // Create Form Actions:
         
-        $actions = FieldList::create(
-            FormAction::create(
-                'doSubscribe',
-                $this->ButtonLabel
-            )
-        );
-        
-        // Define Required Fields:
-        
-        $required = ['Email'];
-        
-        if ($this->ShowFirstName && $this->RequireFirstName) {
-            $required[] = 'FirstName';
-        }
-        
-        if ($this->ShowLastName && $this->RequireLastName) {
-            $required[] = 'LastName';
-        }
+        $actions = FieldList::create([
+            FormAction::create('doUnsubscribe', 'Unsubscribe')
+        ]);
         
         // Create Form Validator:
         
-        $validator = Validator::create()->addRequiredFields($required);
+        $validator = Validator::create()->addRequiredFields([
+            'Email'
+        ]);
         
         // Create Form Object:
         
         $form = Form::create($this, 'Form', $fields, $actions, $validator);
         
-        // Define Form ID:
-        
-        $form->setHTMLID(sprintf('%s_Form', $this->getHTMLID()));
-        
-        // Enable Spam Protection (if installed):
+        // Enable Spam Protection (if available):
         
         if ($form->hasMethod('enableSpamProtection')) {
             $form->enableSpamProtection();
         }
-        
-        // Restore Form State (following ID change):
-        
-        $form->restoreFormState();
         
         // Extend Form Object:
         
@@ -168,14 +107,14 @@ class MailChimpSignupController extends BaseComponentController
     }
     
     /**
-     * Handles the submission of the subscribe form.
+     * Handles the submission of the unsubscribe form.
      *
      * @param array $data
      * @param Form $form
      *
      * @return HTTPResponse
      */
-    public function doSubscribe($data, $form)
+    public function doUnsubscribe($data, $form)
     {
         // Initialise:
         
@@ -185,22 +124,16 @@ class MailChimpSignupController extends BaseComponentController
         
         $result = ValidationResult::create();
         
-        // Attempt to Subscribe User to List via API:
+        // Attempt to Unsubscribe User from List via API:
         
         try {
             
             // Obtain API Response:
             
-            $response = $this->api->put(
-                $this->getSubscribeMethod(),
+            $response = $this->api->patch(
+                $this->getUnsubscribeMethod($data),
                 [
-                    'email_address' => $data['Email'],
-                    'email_type' => 'html',
-                    'status' => 'subscribed',
-                    'merge_fields' => [
-                        'FNAME' => isset($data['FirstName']) ? $data['FirstName'] : null,
-                        'LNAME' => isset($data['LastName'])  ? $data['LastName']  : null
-                    ]
+                    'status' => 'unsubscribed'
                 ]
             );
             
@@ -210,13 +143,13 @@ class MailChimpSignupController extends BaseComponentController
                 
                 // Add Subscribe Message:
                 
-                $result->addMessage($this->OnSubscribeMessage, ValidationResult::TYPE_GOOD);
+                $result->addMessage($this->OnUnsubscribeMessage, ValidationResult::TYPE_GOOD);
                 
-            } elseif (isset($response['title']) && $response['title'] == 'Member Exists') {
+            } elseif (isset($response['status']) && $response['status'] == 404) {
                 
-                // Member Already Exists:
+                // Member Does Not Exist:
                 
-                $result->addMessage($this->OnAlreadySubscribedMessage, ValidationResult::TYPE_WARNING);
+                $result->addMessage($this->OnSubcriberNotFoundMessage, ValidationResult::TYPE_WARNING);
                 
             } else {
                 
@@ -278,13 +211,13 @@ class MailChimpSignupController extends BaseComponentController
     }
     
     /**
-     * Answers the API method for adding the subscriber.
+     * Answers the API method for unsubscribing the subscriber.
      *
      * @param array $data
      *
      * @return string
      */
-    protected function getSubscribeMethod($data)
+    protected function getUnsubscribeMethod($data)
     {
         return sprintf(
             'lists/%s/members/%s',
