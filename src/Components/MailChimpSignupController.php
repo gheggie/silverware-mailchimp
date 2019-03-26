@@ -192,7 +192,7 @@ class MailChimpSignupController extends BaseComponentController
             // Obtain API Response:
             
             $response = $this->api->put(
-                $this->getSubscribeMethod(),
+                $this->getSubscribeMethod($data),
                 [
                     'email_address' => $data['Email'],
                     'email_type' => 'html',
