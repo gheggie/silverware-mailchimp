@@ -1,0 +1,25 @@
+{
+    "name": "praxisnetau/silverware-mailchimp",
+    "description": "MailChimp module for SilverWare.",
+    "type": "silverstripe-module",
+    "homepage": "https://github.com/praxisnetau/silverware-mailchimp",
+    "keywords": ["silverstripe", "silverware", "mailchimp"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Colin Tucker",
+            "role": "Developer",
+            "email": "colin@praxis.net.au",
+            "homepage": "http://www.praxis.net.au"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "praxisnetau/silverware": "~1.0",
+        "drewm/mailchimp-api": "~2.2"
+    },
+    "extra": {
+        "installer-name": "silverware-mailchimp"
+    },
+    "target-dir": "silverware-mailchimp"
+}
