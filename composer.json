@@ -1,5 +1,5 @@
 {
-    "name": "praxisnetau/silverware-mailchimp",
+    "name": "silverware/mailchimp",
     "description": "MailChimp module for SilverWare.",
     "type": "silverstripe-module",
     "homepage": "https://github.com/praxisnetau/silverware-mailchimp",
@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "praxisnetau/silverware": "~1.0",
+        "silverware/silverware": "3.x.x-dev",
         "drewm/mailchimp-api": "~2.2"
     },
     "extra": {
